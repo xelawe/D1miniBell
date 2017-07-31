@@ -71,7 +71,9 @@ void setup() {
   DebugPrintln(F("DFPlayer Mini online."));
 
 
-  myDFPlayer.volume(10);  //Set volume value. From 0 to 30
+  myDFPlayer.volume(30);  //Set volume value. From 0 to 30
+  myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
+  myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
   myDFPlayer.play(1);  //Play the first mp3
 
   wifi_init("D1miniBell");
@@ -82,19 +84,16 @@ void setup() {
   init_mqtt(callback_mqtt);
 
 
-
-
-
-  pinMode(BUILTIN_LED, OUTPUT);  // initialize onboard LED as output
+  //pinMode(BUILTIN_LED, OUTPUT);  // initialize onboard LED as output
 }
 
 void loop() {
 
   check_ota();
 
-  digitalWrite(BUILTIN_LED, HIGH);  // turn on LED with voltage HIGH
-  delay(1000);                      // wait one second
-  digitalWrite(BUILTIN_LED, LOW);   // turn off LED with voltage LOW
+  //digitalWrite(BUILTIN_LED, HIGH);  // turn on LED with voltage HIGH
+  //delay(1000);                      // wait one second
+  //digitalWrite(BUILTIN_LED, LOW);   // turn off LED with voltage LOW
   delay(1000);                      // wait one second
 
 
@@ -105,9 +104,9 @@ void loop() {
   //    myDFPlayer.next();  //Play next mp3 every 3 second.
   //  }
   //
-   if (myDFPlayer.available()) {
-     printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-   }
+  if (myDFPlayer.available()) {
+    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+  }
 }
 
 void printDetail(uint8_t type, int value) {
