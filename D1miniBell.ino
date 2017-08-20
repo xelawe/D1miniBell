@@ -12,6 +12,12 @@
 #define DebugPrintln(...) { }
 #endif
 
+const char hostname[] PROGMEM = "D1miniBell";
+
+const char* mqtt_subtopics[] = {"ATSH28/OG/G1/BELL/1/set", "ATSH28/OG/G1/BELL/1/mute"};
+
+
+
 #include <SoftwareSerial.h>
 #include <DFRobotDFPlayerMini.h>
 #include <Ticker.h>
@@ -76,12 +82,12 @@ void setup() {
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
   myDFPlayer.play(1);  //Play the first mp3
 
-  wifi_init("D1miniBell");
+  wifi_init(hostname);
   delay(500);
 
-  init_ota("D1miniBell");
+  init_ota(hostname);
 
-  init_mqtt(callback_mqtt);
+  init_mqtt(hostname, callback_mqtt);
 
 
   //pinMode(BUILTIN_LED, OUTPUT);  // initialize onboard LED as output

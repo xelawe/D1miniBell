@@ -2,10 +2,12 @@
 #define MQTT_TOOL_H
 
 #include <PubSubClient.h>
+#include "cy_mqtt_cfg.h"
 
-const char* mqtt_server = "mqtt.cytron.tiscali.at";
+
 const char* mqtt_subtopic_bell = "ATSH28/OG/G1/BELL/1/set";
 const char* mqtt_pubtopic_bell = "ATSH28/OG/G1/BELL/1/state";
+const char* mqtt_clientname;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -36,7 +38,8 @@ void reconnect_mqtt() {
   }
 }
 
-void init_mqtt(MQTT_CALLBACK_SIGNATURE) {
+void init_mqtt(const char* iv_clientname, MQTT_CALLBACK_SIGNATURE) {
+  mqtt_clientname = iv_clientname;
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
 }
