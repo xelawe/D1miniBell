@@ -14,7 +14,9 @@
 
 const char hostname[] PROGMEM = "D1miniBell";
 
-const char* mqtt_subtopics[] = {"ATSH28/OG/G1/BELL/1/set", "ATSH28/OG/G1/BELL/1/mute"};
+const int cnt_subtopics = 2;
+const char* mqtt_subtopics[cnt_subtopics] = {"ATSH28/OG/G1/BELL/1/set", "ATSH28/OG/G1/BELL/1/mute"};
+boolean mqtt_flg_subtopics[cnt_subtopics];
 
 
 
@@ -32,8 +34,6 @@ Ticker TickerBell;
 
 void printDetail(uint8_t type, int value);
 
-
-
 void callback_mqtt(char* topic, byte* payload, unsigned int length) {
   DebugPrint("Message arrived [");
   DebugPrint(topic);
@@ -43,20 +43,14 @@ void callback_mqtt(char* topic, byte* payload, unsigned int length) {
   }
   DebugPrintln();
 
-  // Switch on the LED if an 1 was received as first character
-  switch ((char)payload[0]) {
-    case '0':
-      //turnOff();
-      break;
-    case '1':
-      //turnOn();
-      break;
-    case '2':
-      //toggle();
-      break;
+
+  for (int j = 0; j < cnt_subtopics; j++) {
+    if ( topic == mqtt_subtopics[j]) {
+      mqtt_flg_subtopics[j] = true;
+    }
   }
 }
-
+ 
 
 void setup() {
 #ifdef serdebug
@@ -87,7 +81,7 @@ void setup() {
 
   init_ota(hostname);
 
-  init_mqtt(hostname, callback_mqtt);
+  init_mqtt(hostname, mqtt_subtopics, &cnt_subtopics, callback_mqtt);
 
 
   //pinMode(BUILTIN_LED, OUTPUT);  // initialize onboard LED as output
