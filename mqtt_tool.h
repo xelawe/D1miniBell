@@ -39,6 +39,31 @@ void add_subtopic(const char* iv_subtopic, MQTT_CALLBACK_SIGNATURE) {
 
 }
 
+void mqtt_callback(char* topic, byte* payload, unsigned int length) {
+  DebugPrint("Message arrived [");
+  DebugPrint(topic);
+  DebugPrint("] ");
+  for (int i = 0; i < length; i++) {
+    DebugPrint((char)payload[i]);
+  }
+  DebugPrintln();
+
+    MQTTSubTopic *lv_SubTopic;
+    for (int i = 0; i < gv_SubTopicList.size(); i++) {
+
+      // is topic called?
+      lv_SubTopic = gv_SubTopicList.get(i);
+      if (lv_SubTopic->topic == topic){
+        lv_SubTopic->callback(topic,payload,length);
+      }
+    }
+
+//  for (int j = 0; j < cnt_subtopics; j++) {
+//    if ( topic == mqtt_subtopics[j]) {
+//      mqtt_flg_subtopics[j] = true;
+//    }
+//  }
+}
 
 void reconnect_mqtt() {
   // Loop until we're reconnected
@@ -63,11 +88,11 @@ void reconnect_mqtt() {
   }
 }
 
-void init_mqtt(const char* iv_clientname, MQTT_CALLBACK_SIGNATURE) {
+void init_mqtt(const char* iv_clientname) {
   mqtt_clientname = iv_clientname;
 
   client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
+  client.setCallback(mqtt_callback);
 }
 
 void check_mqtt() {

@@ -14,7 +14,7 @@
 
 const char hostname[] PROGMEM = "D1miniBell";
 
-//const char* mqtt_subtopics[cnt_subtopics] = {"ATSH28/OG/G1/BELL/1/set", "ATSH28/OG/G1/BELL/1/mute"};
+//const char* mqtt_subtopics[cnt_subtopics] = {, };
 
 #include <SoftwareSerial.h>
 #include <DFRobotDFPlayerMini.h>
@@ -30,23 +30,15 @@ Ticker TickerBell;
 
 void printDetail(uint8_t type, int value);
 
-void callback_mqtt(char* topic, byte* payload, unsigned int length) {
-  DebugPrint("Message arrived [");
-  DebugPrint(topic);
-  DebugPrint("] ");
-  for (int i = 0; i < length; i++) {
-    DebugPrint((char)payload[i]);
-  }
-  DebugPrintln();
+void callback_mqtt1(char* topic, byte* payload, unsigned int length) {
+  DebugPrintln("Callback 1");
 
-
-//  for (int j = 0; j < cnt_subtopics; j++) {
-//    if ( topic == mqtt_subtopics[j]) {
-//      mqtt_flg_subtopics[j] = true;
-//    }
-//  }
 }
- 
+
+void callback_mqtt2(char* topic, byte* payload, unsigned int length) {
+  DebugPrintln("Callback 2");
+
+}
 
 void setup() {
 #ifdef serdebug
@@ -77,8 +69,9 @@ void setup() {
 
   init_ota(hostname);
 
-  init_mqtt(hostname, callback_mqtt);
-
+  init_mqtt(hostname);
+  add_subtopic("ATSH28/OG/G1/BELL/1/set", callback_mqtt1);
+  add_subtopic("ATSH28/OG/G1/BELL/1/mute", callback_mqtt2);
 
   //pinMode(BUILTIN_LED, OUTPUT);  // initialize onboard LED as output
 }
