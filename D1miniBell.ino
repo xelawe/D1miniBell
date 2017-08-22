@@ -14,11 +14,7 @@
 
 const char hostname[] PROGMEM = "D1miniBell";
 
-const int cnt_subtopics = 2;
-const char* mqtt_subtopics[cnt_subtopics] = {"ATSH28/OG/G1/BELL/1/set", "ATSH28/OG/G1/BELL/1/mute"};
-boolean mqtt_flg_subtopics[cnt_subtopics];
-
-
+//const char* mqtt_subtopics[cnt_subtopics] = {"ATSH28/OG/G1/BELL/1/set", "ATSH28/OG/G1/BELL/1/mute"};
 
 #include <SoftwareSerial.h>
 #include <DFRobotDFPlayerMini.h>
@@ -44,11 +40,11 @@ void callback_mqtt(char* topic, byte* payload, unsigned int length) {
   DebugPrintln();
 
 
-  for (int j = 0; j < cnt_subtopics; j++) {
-    if ( topic == mqtt_subtopics[j]) {
-      mqtt_flg_subtopics[j] = true;
-    }
-  }
+//  for (int j = 0; j < cnt_subtopics; j++) {
+//    if ( topic == mqtt_subtopics[j]) {
+//      mqtt_flg_subtopics[j] = true;
+//    }
+//  }
 }
  
 
@@ -81,7 +77,7 @@ void setup() {
 
   init_ota(hostname);
 
-  init_mqtt(hostname, mqtt_subtopics, &cnt_subtopics, callback_mqtt);
+  init_mqtt(hostname, callback_mqtt);
 
 
   //pinMode(BUILTIN_LED, OUTPUT);  // initialize onboard LED as output
