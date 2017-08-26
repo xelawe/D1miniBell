@@ -12,16 +12,14 @@
 #define DebugPrintln(...) { }
 #endif
 
-const char hostname[] PROGMEM = "D1miniBell";
-
-//const char* mqtt_subtopics[cnt_subtopics] = {, };
+const char* gv_hostname = "D1miniBell";
 
 #include <SoftwareSerial.h>
 #include <DFRobotDFPlayerMini.h>
 #include <Ticker.h>
 #include "cy_wifi.h"
 #include "cy_ota.h"
-#include "mqtt_tool.h"
+#include "cy_mqtt.h"
 
 SoftwareSerial mySoftwareSerial(5, 4); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
@@ -31,13 +29,13 @@ Ticker TickerBell;
 void printDetail(uint8_t type, int value);
 
 void callback_mqtt1(char* topic, byte* payload, unsigned int length) {
-  DebugPrintln("Callback 1");
-
+  DebugPrintln("Callback 1 - Play tune");
+  myDFPlayer.play((char)payload[0] - '0'); //Play # mp3
 }
 
 void callback_mqtt2(char* topic, byte* payload, unsigned int length) {
-  DebugPrintln("Callback 2");
-
+  DebugPrintln("Callback 2 - Mute");
+  myDFPlayer.pause();
 }
 
 void setup() {
@@ -62,14 +60,14 @@ void setup() {
   myDFPlayer.volume(30);  //Set volume value. From 0 to 30
   myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
-  myDFPlayer.play(1);  //Play the first mp3
+  //myDFPlayer.play(1);  //Play the first mp3
 
-  wifi_init(hostname);
+  wifi_init(gv_hostname);
   delay(500);
 
-  init_ota(hostname);
+  init_ota(gv_hostname);
 
-  init_mqtt(hostname);
+  init_mqtt(gv_hostname);
   add_subtopic("ATSH28/OG/G1/BELL/1/set", callback_mqtt1);
   add_subtopic("ATSH28/OG/G1/BELL/1/mute", callback_mqtt2);
 
@@ -78,24 +76,18 @@ void setup() {
 
 void loop() {
 
+  DebugPrintln(F("loop"));
+
   check_ota();
 
-  //digitalWrite(BUILTIN_LED, HIGH);  // turn on LED with voltage HIGH
-  //delay(1000);                      // wait one second
-  //digitalWrite(BUILTIN_LED, LOW);   // turn off LED with voltage LOW
-  delay(1000);                      // wait one second
+  check_mqtt();
 
+  delay(200);                      // wait one second
 
-  //  static unsigned long timer = millis();
-  //
-  //  if (millis() - timer > 3000) {
-  //    timer = millis();
-  //    myDFPlayer.next();  //Play next mp3 every 3 second.
-  //  }
-  //
   if (myDFPlayer.available()) {
     printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
   }
+
 }
 
 void printDetail(uint8_t type, int value) {
