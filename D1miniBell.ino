@@ -25,23 +25,28 @@ SoftwareSerial mySoftwareSerial(5, 4); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 Ticker TickerBell;
 
+//#define MP3PowerPin 14
 
 void printDetail(uint8_t type, int value);
 
 void callback_mqtt1(char* topic, byte* payload, unsigned int length) {
   DebugPrintln("Callback 1 - Play tune");
   myDFPlayer.play((char)payload[0] - '0'); //Play # mp3
+  delay(4000);
+  myDFPlayer.pause();
 }
 
 void callback_mqtt2(char* topic, byte* payload, unsigned int length) {
   DebugPrintln("Callback 2 - Mute");
-  myDFPlayer.pause();
+
 }
 
 void setup() {
 #ifdef serdebug
   Serial.begin(115200);
 #endif
+
+  DebugPrintln("\n" + String(__DATE__) + ", " + String(__TIME__) + " " + String(__FILE__));
 
   mySoftwareSerial.begin(9600);
   DebugPrintln();
@@ -59,8 +64,9 @@ void setup() {
 
   myDFPlayer.volume(30);  //Set volume value. From 0 to 30
   myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
-  myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
-  //myDFPlayer.play(1);  //Play the first mp3
+  //myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
+  //myDFPlayer.play(0);  //Play the first mp3
+  myDFPlayer.pause();
 
   wifi_init(gv_hostname);
   delay(500);
@@ -71,12 +77,11 @@ void setup() {
   add_subtopic("ATSH28/OG/G1/BELL/1/set", callback_mqtt1);
   add_subtopic("ATSH28/OG/G1/BELL/1/mute", callback_mqtt2);
 
-  //pinMode(BUILTIN_LED, OUTPUT);  // initialize onboard LED as output
+  //pinMode(MP3PowerPin, OUTPUT);
+  //digitalWrite(MP3PowerPin, HIGH);
 }
 
 void loop() {
-
-  DebugPrintln(F("loop"));
 
   check_ota();
 
