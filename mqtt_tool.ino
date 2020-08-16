@@ -11,7 +11,7 @@ char gv_pbuffer[5];// buffer for reading the string to (needs to be large enough
 const char gc_cmd_off[] PROGMEM = "off";
 const char gc_cmd_on[] PROGMEM = "on";
 const char gc_cmd_mute[] PROGMEM = "mute";
-const char* const gt_cmd[] PROGMEM = { gc_cmd_off, gc_cmd_on, gc_cmd_mute };
+const char* const gt_cmd[] PROGMEM = { gc_cmd_off, gc_cmd_on, gc_cmd_mute, "3", "4", "5", "6" };
 
 char *get_stopic_ix( int ix ) {
   strcpy_P(gv_sbuffer, (char*)pgm_read_dword(&(gt_stopic[ix])));
@@ -29,7 +29,7 @@ char *get_cmd_ix( int ix ) {
 void callback_mqtt1(char* topic, byte* payload, unsigned int length) {
 
   DebugPrintln("Callback 1 - Play tune");
-    DFplayer_play((char)payload[0] - '0'); //Play # mp3
+  play_DFplayer((char)payload[0] - '0'); //Play # mp3
 
 }
 
@@ -43,5 +43,13 @@ void init_mqtt_local() {
   //add_subtopic("ATSH28/OG/G1/BELL/1/set", callback_mqtt1);
   //add_subtopic("ATSH28/OG/G1/BELL/1/mute", callback_mqtt2);
   add_subtopic(mqtt_GetTopic_P(gv_stopic_bell, 0, gv_clientname, get_stopic_ix(0)), callback_mqtt1);
+}
+
+void pub_tune(int tune) {
+  if (!client.publish(mqtt_GetTopic_P(gv_ptopic, 1, gv_clientname, get_stopic_ix(0)), get_cmd_ix(tune), false)) {
+    DebugPrintln(F("pub failed!"));
+  } else {
+    DebugPrintln(F("pub ok!"));
+  }
 }
 

@@ -4,9 +4,11 @@
 SoftwareSerial mySoftwareSerial(5, 4); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
-//#define MP3PowerPin 14
 
-void printDetail(uint8_t type, int value);
+int tune_triggered = 999;
+
+
+//void printDetail(uint8_t type, int value);
 
 void init_dfplayer() {
   mySoftwareSerial.begin(9600);
@@ -31,11 +33,20 @@ void init_dfplayer() {
 }
 
 
-void DFplayer_play(int tunen_nbr) {
+void play_DFplayer(int tunen_nbr) {
   // myDFPlayer.play((char)payload[0] - '0'); //Play # mp3
   myDFPlayer.play(tunen_nbr); //Play # mp3
+
+  tune_triggered = tunen_nbr;
   delay(4000);
   myDFPlayer.pause();
+}
+
+void check_DFPlayer() {
+  if (tune_triggered < 999) {
+    pub_tune( tune_triggered );
+    tune_triggered = 999;
+  }
 }
 
 void printDetail(uint8_t type, int value) {
