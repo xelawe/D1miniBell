@@ -3,7 +3,7 @@ void loop() {
 
   check_ota();
 
-  check_mqtt();
+  check_mqtt_reset();
 
   delay(200);                      // wait one second
 

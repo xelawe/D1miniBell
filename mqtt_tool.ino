@@ -27,10 +27,10 @@ char *get_cmd_ix( int ix ) {
 
 
 void callback_mqtt1(char* topic, byte* payload, unsigned int length) {
+
   DebugPrintln("Callback 1 - Play tune");
-  myDFPlayer.play((char)payload[0] - '0'); //Play # mp3
-  delay(4000);
-  myDFPlayer.pause();
+    DFplayer_play((char)payload[0] - '0'); //Play # mp3
+
 }
 
 //void callback_mqtt2(char* topic, byte* payload, unsigned int length) {

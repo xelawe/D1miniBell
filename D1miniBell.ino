@@ -27,5 +27,6 @@ void setup() {
 
   init_ota(gv_clientname);
 
+  init_mqtt_local( );
 }
 

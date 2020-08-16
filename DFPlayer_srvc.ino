@@ -8,8 +8,8 @@ DFRobotDFPlayerMini myDFPlayer;
 
 void printDetail(uint8_t type, int value);
 
-void init_dfplayer(){
-    mySoftwareSerial.begin(9600);
+void init_dfplayer() {
+  mySoftwareSerial.begin(9600);
   DebugPrintln();
   DebugPrintln(F("DFRobot DFPlayer Mini Demo"));
   DebugPrintln(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
@@ -30,6 +30,13 @@ void init_dfplayer(){
   myDFPlayer.pause();
 }
 
+
+void DFplayer_play(int tunen_nbr) {
+  // myDFPlayer.play((char)payload[0] - '0'); //Play # mp3
+  myDFPlayer.play(tunen_nbr); //Play # mp3
+  delay(4000);
+  myDFPlayer.pause();
+}
 
 void printDetail(uint8_t type, int value) {
   switch (type) {
